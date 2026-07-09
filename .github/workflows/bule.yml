@@ -11,9 +11,11 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Configurar herramienta de Crave
+        env:
+          CRAVE_SECRET: ${{ secrets.CRAVE_CONF }}
         run: |
           mkdir -p ~/.crave
-          echo '${{ secrets.CRAVE_CONF }}' > ~/.crave/crave.conf
+          echo "$CRAVE_SECRET" > ~/.crave/crave.conf
           curl -s https://raw.githubusercontent.com/accupara/crave/master/get_crave.sh | bash
           sudo mv crave /usr/local/bin/
 
