@@ -1,0 +1,23 @@
+name: Compilar ROM con Crave
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clonar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar herramienta de Crave
+        run: |
+          mkdir -p ~/.crave
+          echo '${{ secrets.CRAVE_CONF }}' > ~/.crave/crave.conf
+          curl -s https://raw.githubusercontent.com/accupara/crave/master/get_crave.sh | bash
+          sudo mv crave /usr/local/bin/
+
+      - name: Enviar orden de compilación a Crave
+        run: |
+          crave run -- "rm -rf .repo/local_manifests ; git clone https://github.com/Cristpui/local_manifests.git .repo/local_manifests -b main ; repo sync -c -j\$(nproc --all) --force-sync --no-clone-bundle --no-tags ; source build/envsetup.sh && brunch guamp"
+          
